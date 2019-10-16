@@ -12,32 +12,28 @@ public class Audience {
         this.invitation = Optional.empty();
     }
 
-    public Audience(Integer money, Invitation invitation) {
-        this.money = money;
+    public Audience(Invitation invitation) {
+        this.money = 0;
         this.invitation = Optional.of(invitation);
     }
 
-    public Ticket getTicket(TicketOffice ticketOffice) {
-        invitation.ifPresent(i -> {
-            ticket = Optional.of(ticketOffice.change(i));
-            i.use();
-        });
+    public void takeTicket(TicketOffice ticketOffice) {
+        if(invitation.isPresent()) {
+            ticket = Optional.of(ticketOffice.change(invitation.get()));
+            invitation = Optional.empty();
 
-        if(!invitation.isPresent()) {
-            Integer fee = ticketOffice.getTicketFee();
-
-            ticket = Optional.of(ticketOffice.sell(fee));
-            money -= fee;
+            return;
         }
 
-        return ticket.get();
+        Integer fee = ticketOffice.getTicketFee();
+
+        ticket = Optional.of(ticketOffice.sell(fee));
+        money -= fee;
     }
 
-    public boolean useTicket() {
-        if(ticket.isPresent()) {
-            ticket = Optional.empty();
-            return true;
-        }
-        return false;
+    public Ticket getTicket() {
+        ticket.orElseThrow(IllegalStateException::new);
+
+        return ticket.get();
     }
 }

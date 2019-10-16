@@ -1,5 +1,6 @@
 package theater;
 
+import java.time.LocalDateTime;
 import java.util.Stack;
 import java.util.stream.IntStream;
 
@@ -13,15 +14,14 @@ public class TicketOffice {
         }
 
         this.moneyAmount = 0;
+
+        LocalDateTime today = LocalDateTime.now();
         this.tickets = new Stack<>();
         IntStream.range(0, ticketAmount)
-            .forEach(i -> tickets.push(new Ticket(ticketFee)));
+            .forEach(i -> tickets.push(new Ticket(ticketFee, today)));
     }
 
     public Ticket change(Invitation invitation) {
-        if(invitation.isUsed()) {
-            throw new IllegalArgumentException("invitation is already used");
-        }
         return tickets.pop();
     }
 
